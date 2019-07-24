@@ -24,6 +24,20 @@ class UserController extends Controller
             return response()->json(['error'=>'Unauthorised'], 401); 
         } 
     }
+
+    /** 
+     * login api 
+     * 
+     * @return \Illuminate\Http\Response 
+     */ 
+    public function logout(){ 
+        if(Auth::logout()){ 
+            return response()->json(['success' => true], $this-> successStatus); 
+        } else { 
+            return response()->json(['error'=>'here was an error when trying to log out'], 500); 
+        } 
+    }
+
     /** 
      * Register api 
      * 

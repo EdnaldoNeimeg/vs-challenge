@@ -16,6 +16,11 @@ use Illuminate\Http\Request;
 Route::post('login', 'API\UserController@login');
 Route::post('register', 'API\UserController@register');
 
+Route::group(['middleware'=>['auth:api']], function(){
+	//Route::get('logout', 'API\UserController@logout');	
+	Route::post('logout', 'Auth\LoginController@logout');
+});
+
 Route::group(['middleware'=>['auth:api'],'prefix'=>'v1'], function(){
 	Route::get('/user', function (Request $request) {
 	    return $request->user();
