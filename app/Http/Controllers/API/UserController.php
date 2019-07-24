@@ -38,14 +38,20 @@ class UserController extends Controller
         $token = $request->bearerToken();
         if ($token) {
             $id = (new Parser())->parse($token)->getHeader('jti');
-            $revoked = DB::table('oauth_access_tokens')->where('id', '=', $id)->update(['revoked' => 1]);
-            if($revoked){
-                $code = $this-> successStatus;
-                $data = ['success' => true];
-            } else {
-                $code = 500;
-                $data = ['error'=>'There was an error when trying to logout'];
-            }
+            $token = $request->user()->tokens->find($id);
+            $token->revoke();
+
+            $code = $this-> successStatus;
+            $data = ['success' => true];
+
+            // $revoked = DB::table('oauth_access_tokens')->where('id', '=', $id)->update(['revoked' => 1]);
+            // if($revoked){
+            //     $code = $this-> successStatus;
+            //     $data = ['success' => true];
+            // } else {
+            //     $code = 500;
+            //     $data = ['error'=>'There was an error when trying to logout'];
+            // }
         } else {
             $code = 400;
             $data = ['error'=>'You must provide the token'];
