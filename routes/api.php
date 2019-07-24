@@ -18,7 +18,7 @@ Route::post('register', 'API\UserController@register');
 
 Route::group(['middleware'=>['auth:api']], function(){
 	//Route::get('logout', 'API\UserController@logout');	
-	Route::get('logout', 'Auth\LoginController@logout');
+	Route::get('logout', 'API\UserController@logout');
 });
 
 Route::group(['middleware'=>['auth:api'],'prefix'=>'v1'], function(){
