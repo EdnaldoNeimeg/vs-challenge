@@ -39,7 +39,7 @@ class UserController extends Controller
         if ($token) {
             $id = (new Parser())->parse($token)->getHeader('jti');
             $revoked = DB::table('oauth_access_tokens')->where('id', '=', $id)->update(['revoked' => 1]);
-            if($this->guard()->logout()){
+            if(Auth::guard()->logout()){
                 $code = $this-> successStatus;
                 $data = ['success' => true];
             } else {
