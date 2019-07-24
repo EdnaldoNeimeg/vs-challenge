@@ -39,7 +39,7 @@ class UserController extends Controller
         if ($token) {
             $id = (new Parser())->parse($token)->getHeader('jti');
             $revoked = DB::table('oauth_access_tokens')->where('id', '=', $id)->update(['revoked' => 1]);
-            if(Auth::guard()->logout()){
+            if($revoked){
                 $code = $this-> successStatus;
                 $data = ['success' => true];
             } else {
@@ -50,8 +50,6 @@ class UserController extends Controller
             $code = 400;
             $data = ['error'=>'You must provide the token'];
         }
-        
-        Auth::logout();
         
         return response()->json($data, $code);
     }
