@@ -5,6 +5,10 @@ use App\Http\Controllers\Controller;
 use App\User; 
 use Illuminate\Support\Facades\Auth; 
 use Validator;
+
+use Lcobucci\JWT\Parser;
+use DB;
+
 class UserController extends Controller 
 {
     public $successStatus = 200;
@@ -30,12 +34,26 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\Response 
      */ 
-    public function logout(){ 
-        if(Auth::logout()){ 
-            return response()->json(['success' => true], $this-> successStatus); 
-        } else { 
-            return response()->json(['error'=>'here was an error when trying to log out'], 500); 
-        } 
+    public function logout(){
+        $token = $request->bearerToken();
+        if ($token) {
+            $id = (new Parser())->parse($token)->getHeader('jti');
+            $revoked = DB::table('oauth_access_tokens')->where('id', '=', $id)->update(['revoked' => 1]);
+            if($this->guard()->logout()){
+                $code = $this-> successStatus;
+                $data = ['success' => true];
+            } else {
+                $code = 500;
+                $data = ['error'=>'There was an error when trying to logout'];
+            }
+        } else {
+            $code = 400;
+            $data = ['error'=>'You must provide the token'];
+        }
+        
+        Auth::logout();
+        
+        return response()->json($data, $code);
     }
 
     /** 
