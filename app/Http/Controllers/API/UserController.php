@@ -34,7 +34,7 @@ class UserController extends Controller
      * 
      * @return \Illuminate\Http\Response 
      */ 
-    public function logout(){
+    public function logout(Request $request){
         $token = $request->bearerToken();
         if ($token) {
             $id = (new Parser())->parse($token)->getHeader('jti');
